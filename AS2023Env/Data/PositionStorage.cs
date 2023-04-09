@@ -14,7 +14,7 @@ public class PositionStorage : IStorage<Position>
         {
             new("hr", "Сотрудник отдела кадров"),
             new("backend-developer", "Бэкенд-разработчик"),
-            new("frontend-dveloper", "Фронтенд-разработчик"),
+            new("frontend-developer", "Фронтенд-разработчик"),
             new("teamlead", "Тимлид"),
             new("devops", "DevOps инженер"),
             new("qa", "Инженер по тестированию"),
