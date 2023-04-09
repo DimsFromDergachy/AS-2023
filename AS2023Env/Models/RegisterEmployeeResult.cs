@@ -1,3 +1,3 @@
 ﻿namespace AS2023Env.Models;
 
-public record RegisterEmployeeResult(bool Success, string Message);
+public record RegisterEmployeeResult(string Result);

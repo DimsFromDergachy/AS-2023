@@ -37,12 +37,12 @@ public class EmployeeController : ControllerBase
         if (unit == null)
         {
             Response.StatusCode = (int)HttpStatusCode.BadRequest;
-            return new RegisterEmployeeResult(false, $"Штатная единица с id = {request.StaffUnitId} не найдена");
+            return new RegisterEmployeeResult($"Штатная единица с id = {request.StaffUnitId} не найдена");
         }
         if (!unit.Active)
         {
             Response.StatusCode = (int)HttpStatusCode.BadRequest;
-            return new RegisterEmployeeResult(false, $"Штатная единица с id = {request.StaffUnitId} занята");
+            return new RegisterEmployeeResult($"Штатная единица с id = {request.StaffUnitId} занята");
         }
 
         var newEmp = new Employee
@@ -57,6 +57,6 @@ public class EmployeeController : ControllerBase
         unit.EmployeeId = newEmp.Id;
         await _staffUnitStorage.Update(unit);
 
-        return new RegisterEmployeeResult(true, newEmp.Id);
+        return new RegisterEmployeeResult(newEmp.Id);
     }
 }
