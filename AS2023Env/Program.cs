@@ -1,6 +1,7 @@
 using AS2023Env;
 using AS2023Env.Data;
 using AS2023Env.Models;
+using BackgroundService = AS2023Env.BackgroundService;
 
 WebApplicationBuilder builder = WebApplication.CreateBuilder(args);
 
@@ -9,6 +10,7 @@ builder.Services.AddEndpointsApiExplorer();
 builder.Services.AddSwaggerGen();
 
 builder.Services
+    .AddHostedService<BackgroundService>()
     .AddSingleton<IStorage<Position>, PositionStorage>()
     .AddSingleton<IStorage<Employee>, EmployeeStorage>()
     .AddSingleton<IStorage<StaffUnit>, StaffUnitStorage>();
