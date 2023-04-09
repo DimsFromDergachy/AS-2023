@@ -33,6 +33,11 @@ public class BackgroundService : IHostedService
         }
 
         List<Employee> employees = await _employeeStorage.GetList();
+        if (employees.Count == 0)
+        {
+            return;
+        }
+
         var rng = new Random();
         int index = rng.Next(0, employees.Count);
 
