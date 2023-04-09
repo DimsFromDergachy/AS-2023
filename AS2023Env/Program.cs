@@ -15,6 +15,18 @@ builder.Services
     .AddSingleton<IStorage<Employee>, EmployeeStorage>()
     .AddSingleton<IStorage<StaffUnit>, StaffUnitStorage>();
 
+builder.Logging.ClearProviders().AddConsole();
+builder.Logging.AddFilter((_, category, logLevel) =>
+{
+#if DEBUG == false    
+    if (category.StartsWith("Microsoft."))
+    {
+        return logLevel > LogLevel.Information;
+    }
+#endif
+    return logLevel >= LogLevel.Information;
+});
+
 WebApplication app = builder.Build();
 
 app.UseSwagger();

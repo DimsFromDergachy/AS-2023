@@ -6,18 +6,21 @@ public class BackgroundService : IHostedService
 {
     private readonly IStorage<StaffUnit> _staffUnitStorage;
     private readonly IStorage<Employee> _employeeStorage;
+    private readonly ILogger<BackgroundService> _logger;
 
     private Timer _timer = null;
-
-    public BackgroundService(IStorage<StaffUnit> staffUnitStorage, IStorage<Employee> employeeStorage)
+    
+    public BackgroundService(IStorage<StaffUnit> staffUnitStorage, IStorage<Employee> employeeStorage, ILogger<BackgroundService> logger)
     {
         _staffUnitStorage = staffUnitStorage;
         _employeeStorage = employeeStorage;
+        _logger = logger;
     }
 
     public Task StartAsync(CancellationToken cancellationToken)
     {
         _timer = new Timer(FireEmployee, null, Constants.FireEmployeeDelay, Constants.FireEmployeeDelay);
+        _logger.LogInformation("Фоновый сервис стартовал");
         return Task.CompletedTask;
     }
 
@@ -42,12 +45,13 @@ public class BackgroundService : IHostedService
         }
         await _employeeStorage.Delete(pickToFire.Id);
 
-        Console.WriteLine("{0} уволен, позиция {1} освобождена", pickToFire.Id, staffUnit?.Id);
+        _logger.LogInformation("{EmployeeId} уволен, позиция {StaffUnitId} освобождена", pickToFire.Id, staffUnit?.Id);
     }
 
     public Task StopAsync(CancellationToken cancellationToken)
     {
         _timer.Change(Timeout.Infinite, 0);
+        _logger.LogInformation("Фоновый сервис останавливается");
         return Task.CompletedTask;
     }
 }
