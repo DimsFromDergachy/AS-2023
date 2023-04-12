@@ -15,9 +15,9 @@ public class StaffUnitController : ControllerBase
         _storage = storage;
     }
 
-    [HttpGet("GetStaffUnitList")]
+    [HttpGet("StaffUnitList")]
     [SwaggerOperation("Получить список штатных единиц")]
-    public async Task<List<StaffUnit>> GetStaffUnitListAsync(bool onlyActive)
+    public async Task<List<StaffUnit>> StaffUnitListAsync(bool onlyActive)
     {
         if (!onlyActive)
         {

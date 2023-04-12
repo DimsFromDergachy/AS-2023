@@ -1,5 +1,4 @@
-﻿using System.ComponentModel;
-using System.Net;
+﻿using System.Net;
 using AS2023Env.Models;
 using Microsoft.AspNetCore.Mvc;
 using Swashbuckle.AspNetCore.Annotations;
@@ -19,9 +18,9 @@ public class EmployeeController : ControllerBase
         _staffUnitStorage = staffUnitStorage;
     }
 
-    [HttpGet("GetEmployeeList")]
+    [HttpGet("EmployeeList")]
     [SwaggerOperation("Получить список сотрудников")]
-    public async Task<List<Employee>> GetEmployeeListAsync(string positionId)
+    public async Task<List<Employee>> EmployeeListAsync(string positionId)
     {
         if (string.IsNullOrEmpty(positionId))
         {

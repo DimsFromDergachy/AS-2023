@@ -15,9 +15,9 @@ public class PositionController : ControllerBase
         _storage = storage;
     }
     
-    [HttpGet("GetPositionList")]
+    [HttpGet("PositionList")]
     [SwaggerOperation("Получить список должностей")]
-    public Task<List<Position>> GetPositionList()
+    public Task<List<Position>> PositionList()
     {
         return _storage.GetList();
     }
