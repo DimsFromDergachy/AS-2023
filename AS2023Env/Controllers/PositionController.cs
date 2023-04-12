@@ -1,5 +1,6 @@
 ﻿using AS2023Env.Models;
 using Microsoft.AspNetCore.Mvc;
+using Swashbuckle.AspNetCore.Annotations;
 
 namespace AS2023Env.Controllers;
 
@@ -15,6 +16,7 @@ public class PositionController : ControllerBase
     }
     
     [HttpGet("GetPositionList")]
+    [SwaggerOperation("Получить список должностей")]
     public Task<List<Position>> GetPositionList()
     {
         return _storage.GetList();

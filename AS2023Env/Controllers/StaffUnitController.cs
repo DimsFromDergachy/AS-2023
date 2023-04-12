@@ -1,5 +1,6 @@
 ﻿using AS2023Env.Models;
 using Microsoft.AspNetCore.Mvc;
+using Swashbuckle.AspNetCore.Annotations;
 
 namespace AS2023Env.Controllers;
 
@@ -15,6 +16,7 @@ public class StaffUnitController : ControllerBase
     }
 
     [HttpGet("GetStaffUnitList")]
+    [SwaggerOperation("Получить список штатных единиц")]
     public async Task<List<StaffUnit>> GetStaffUnitListAsync(bool onlyActive)
     {
         if (!onlyActive)

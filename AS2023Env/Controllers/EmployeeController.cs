@@ -1,6 +1,8 @@
-﻿using System.Net;
+﻿using System.ComponentModel;
+using System.Net;
 using AS2023Env.Models;
 using Microsoft.AspNetCore.Mvc;
+using Swashbuckle.AspNetCore.Annotations;
 
 namespace AS2023Env.Controllers;
 
@@ -18,6 +20,7 @@ public class EmployeeController : ControllerBase
     }
 
     [HttpGet("GetEmployeeList")]
+    [SwaggerOperation("Получить список сотрудников")]
     public async Task<List<Employee>> GetEmployeeListAsync(string positionId)
     {
         if (string.IsNullOrEmpty(positionId))
@@ -31,6 +34,7 @@ public class EmployeeController : ControllerBase
     }
 
     [HttpPost("RegisterEmployee")]
+    [SwaggerOperation("Зарегистрировать нового сотрудника")]
     public async Task<RegisterEmployeeResult> RegisterEmployeeAsync(RegisterEmployeeRequest request)
     {
         StaffUnit unit = (await _staffUnitStorage.GetList(u => u.Id == request.StaffUnitId)).FirstOrDefault();
