@@ -58,7 +58,7 @@ public class EmployeesController : BaseController<Employee>
             Email = request.Email
         };
         await Storage.Add(newEmp);
-        unit.EmployeeId = newEmp.Id;
+        unit.SetEmployee(newEmp.Id);
         await _staffUnitStorage.Update(unit);
 
         return new RegisterEmployeeResult(newEmp.Id);
