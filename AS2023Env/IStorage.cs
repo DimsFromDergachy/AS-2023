@@ -6,6 +6,7 @@ public interface IStorage<TItem>
 {
     public Task Init();
     public Task<List<TItem>> GetList(Expression<Func<TItem, bool>> filter = null);
+    public Task<TItem> ById(string id);
     public Task Add(TItem item);
     public Task Update(TItem item);
     public Task Delete(string itemId);

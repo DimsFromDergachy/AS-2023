@@ -17,22 +17,31 @@ public class StaffUnitStorage : IStorage<StaffUnit>
     public async Task Init()
     {
         List<Employee> employees = await _employeeStorage.GetList();
-        foreach (Employee employee in employees)
+        foreach (Employee employee in employees.ToList())
         {
             var newUnit = new StaffUnit
             {
                 Id = Guid.NewGuid().ToString(),
                 PositionId = employee.PositionId,
-                EmployeeId = employee.Id
+                EmployeeId = employee.Id,
+                Status = StaffUnitStatus.Closed
             };
 
             _staffUnits.Add(newUnit);
+
+            employee.StaffUnitId = newUnit.Id;
+            await _employeeStorage.Update(employee);
         }
     }
 
     public Task<List<StaffUnit>> GetList(Expression<Func<StaffUnit, bool>> filter = null)
     {
         return Task.FromResult(filter == null ? _staffUnits : _staffUnits.Where(filter.Compile()).ToList());
+    }
+
+    public Task<StaffUnit> ById(string id)
+    {
+        return Task.FromResult(_staffUnits.FirstOrDefault(s => s.Id == id));
     }
 
     public Task Add(StaffUnit item)
@@ -45,7 +54,7 @@ public class StaffUnitStorage : IStorage<StaffUnit>
         StaffUnit found = _staffUnits.FirstOrDefault(e => e.Id == item.Id);
         if (found == null)
         {
-            throw new DataException($"Сотрудник с id = {item.Id} не найден");
+            throw new DataException($"Штатная единица с id = {item.Id} не найдена");
         }
 
         int index = _staffUnits.IndexOf(found);

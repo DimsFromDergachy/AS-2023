@@ -1,4 +1,5 @@
-﻿using System.Linq.Expressions;
+﻿using System.Data;
+using System.Linq.Expressions;
 using AS2023Env.Models;
 using Bogus;
 using Bogus.DataSets;
@@ -52,6 +53,11 @@ public class EmployeeStorage : IStorage<Employee>
         return Task.FromResult(filter == null ? _employees : _employees.Where(filter.Compile()).ToList());
     }
 
+    public Task<Employee> ById(string id)
+    {
+        return Task.FromResult(_employees.FirstOrDefault(e => e.Id == id));
+    }
+
     public Task Add(Employee item)
     {
         _employees.Add(item);
@@ -60,7 +66,17 @@ public class EmployeeStorage : IStorage<Employee>
 
     public Task Update(Employee item)
     {
-        throw new InvalidOperationException();
+        Employee found = _employees.FirstOrDefault(e => e.Id == item.Id);
+        if (found == null)
+        {
+            throw new DataException($"Сотрудник с id = {item.Id} не найден");
+        }
+
+        int index = _employees.IndexOf(found);
+        _employees.RemoveAt(index);
+        _employees.Insert(index, item);
+        
+        return Task.CompletedTask;
     }
 
     public Task Delete(string itemId)

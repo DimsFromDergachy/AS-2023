@@ -1,6 +1,7 @@
 using AS2023Env;
 using AS2023Env.Data;
 using AS2023Env.Models;
+using Microsoft.OpenApi.Models;
 using BackgroundService = AS2023Env.BackgroundService;
 
 WebApplicationBuilder builder = WebApplication.CreateBuilder(args);
@@ -10,10 +11,31 @@ builder.Services.AddEndpointsApiExplorer();
 builder.Services.AddSwaggerGen(c =>
 {
     c.EnableAnnotations();
+    
+    c.AddSecurityDefinition("Basic", new OpenApiSecurityScheme
+    {
+        Description = "Basic auth added to authorization header",
+        Name = "Authorization",
+        In = ParameterLocation.Header,
+        Scheme = "basic",
+        Type = SecuritySchemeType.Http
+    });
+
+    c.AddSecurityRequirement(new OpenApiSecurityRequirement
+    {
+        {
+            new OpenApiSecurityScheme
+            {
+                Reference = new OpenApiReference { Type = ReferenceType.SecurityScheme, Id = "Basic" }
+            },
+            new List<string>()
+        }
+    });
 });
 
 builder.Services
     .AddHostedService<BackgroundService>()
+    .AddSingleton<AuthService>()
     .AddSingleton<IStorage<Position>, PositionStorage>()
     .AddSingleton<IStorage<Employee>, EmployeeStorage>()
     .AddSingleton<IStorage<StaffUnit>, StaffUnitStorage>();

@@ -4,21 +4,9 @@ using Swashbuckle.AspNetCore.Annotations;
 
 namespace AS2023Env.Controllers;
 
-[ApiController]
-[Route("/position")]
-public class PositionController : ControllerBase
+[Route("/positions")]
+[SwaggerTag("Должности")]
+public class PositionController : BaseController<Position>
 {
-    private readonly IStorage<Position> _storage;
-
-    public PositionController(IStorage<Position> storage)
-    {
-        _storage = storage;
-    }
-    
-    [HttpGet("PositionList")]
-    [SwaggerOperation("Получить список должностей")]
-    public Task<List<Position>> PositionList()
-    {
-        return _storage.GetList();
-    }
+    public PositionController(IStorage<Position> storage, AuthService authService) : base(storage, authService) { }
 }

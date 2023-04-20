@@ -26,7 +26,7 @@ public class BackgroundService : IHostedService
 
     private async void FireEmployee(object _)
     {
-        List<StaffUnit> activeStaffUnits = await _staffUnitStorage.GetList(u => u.Active);
+        List<StaffUnit> activeStaffUnits = await _staffUnitStorage.GetList(u => u.Status == StaffUnitStatus.Opened);
         if (activeStaffUnits.Count >= Constants.MaximumActiveStaffUnits)
         {
             return;
@@ -46,6 +46,7 @@ public class BackgroundService : IHostedService
         if (staffUnit != null)
         {
             staffUnit.EmployeeId = null;
+            staffUnit.Status = StaffUnitStatus.Opened;
             await _staffUnitStorage.Update(staffUnit);
         }
         await _employeeStorage.Delete(pickToFire.Id);

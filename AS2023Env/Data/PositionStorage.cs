@@ -29,6 +29,11 @@ public class PositionStorage : IStorage<Position>
         return Task.FromResult(filter == null ? _positions : _positions.Where(filter.Compile()).ToList());
     }
 
+    public Task<Position> ById(string id)
+    {
+        return Task.FromResult(_positions.FirstOrDefault(p => p.Id == id));
+    }
+
     public Task Add(Position item)
     {
         throw new InvalidOperationException();
