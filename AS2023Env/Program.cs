@@ -40,7 +40,7 @@ builder.Services
     .AddSingleton<IStorage<Employee>, EmployeeStorage>()
     .AddSingleton<IStorage<StaffUnit>, StaffUnitStorage>();
 
-builder.Logging.ClearProviders().AddConsole();
+builder.Logging.ClearProviders().AddSimpleConsole(c => c.TimestampFormat = "[yyyy-MM-dd HH:mm:ss] ");
 builder.Logging.AddFilter((_, category, logLevel) =>
 {
 #if DEBUG == false    
@@ -60,6 +60,7 @@ app.UseSwaggerUI();
 app.MapControllers();
 
 // порядок инициализации важен
+Constants.Load();
 await app.Services.GetRequiredService<IStorage<Position>>().Init();
 await app.Services.GetRequiredService<IStorage<Employee>>().Init();
 await app.Services.GetRequiredService<IStorage<StaffUnit>>().Init();
