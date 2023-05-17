@@ -8,3 +8,4 @@ services:
     environment:
         AS23_CREDENTIALS: 'admin:password'
         AS23_CONFIG: '{"empPerPosMin":2,"empPerPosMax":4,"activeUnitsMax":5,"fireDelaySec":15,"pendingDelaySec":30}'
+        AS23_POSITIONS: '{"hr":"Сотрудник отдела кадров","backend-developer":"Бэкенд-разработчик","frontend-developer":"Фронтенд-разработчик","teamlead":"Тимлид","devops":"DevOps инженер","qa":"Инженер по тестированию","design":"Дизайнер"}'

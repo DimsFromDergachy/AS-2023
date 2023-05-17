@@ -1,4 +1,5 @@
 ﻿using System.Linq.Expressions;
+using System.Text.Json;
 using AS2023Env.Models;
 
 namespace AS2023Env.Data;
@@ -9,18 +10,13 @@ public class PositionStorage : IStorage<Position>
 
     public Task Init()
     {
+        string dataRaw = Environment.GetEnvironmentVariable("AS23_POSITIONS")
+                         ?? throw new Exception("No AS23_POSITIONS environment variable set");
+
+        var data = JsonSerializer.Deserialize<Dictionary<string, string>>(dataRaw);
+
         // список должностей фиксирован, поэтому его хардкодим
-        _positions = new List<Position>
-        {
-            new("hr", "Сотрудник отдела кадров"),
-            new("backend-developer", "Бэкенд-разработчик"),
-            new("frontend-developer", "Фронтенд-разработчик"),
-            new("teamlead", "Тимлид"),
-            new("devops", "DevOps инженер"),
-            new("qa", "Инженер по тестированию"),
-            new("design", "Дизайнер"),
-        };
-        
+        _positions = data.Select(d => new Position(d.Key, d.Value)).ToList();
         return Task.CompletedTask;
     }
 
