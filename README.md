@@ -44,4 +44,4 @@
 
 Вывод логов в отдельный файл
 
-`docker compose logs > /path/to/logs.txt &` в том же репозитории
+`docker compose logs -t > /path/to/logs.txt &` в том же репозитории
