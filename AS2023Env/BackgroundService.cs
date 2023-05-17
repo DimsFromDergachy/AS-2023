@@ -35,7 +35,7 @@ public class BackgroundService : IHostedService
         {
             staffUnit.SetClosed();
             _logger.LogInformation(
-                "Для штатной единицы id = {Id} установлен статус {Status}",
+                "Для штатной единицы {Id} установлен статус {Status}",
                 staffUnit.Id,
                 staffUnit.Status.ToString()
             );
@@ -74,7 +74,7 @@ public class BackgroundService : IHostedService
         }
         await _employeeStorage.Delete(pickToFire.Id);
 
-        _logger.LogInformation("{EmployeeId} уволен, позиция {StaffUnitId} освобождена", pickToFire.Id, staffUnit?.Id);
+        _logger.LogInformation("{EmployeeId} уволен, штатная единица {StaffUnitId} освобождена", pickToFire.Id, staffUnit?.Id);
     }
 
     public Task StopAsync(CancellationToken cancellationToken)

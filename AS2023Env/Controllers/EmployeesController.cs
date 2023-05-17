@@ -9,11 +9,13 @@ namespace AS2023Env.Controllers;
 public class EmployeesController : BaseController<Employee>
 {
     private readonly IStorage<StaffUnit> _staffUnitStorage;
+    private readonly ILogger<EmployeesController> _logger;
 
     public EmployeesController(IStorage<Employee> storage, AuthService authService,
-        IStorage<StaffUnit> staffUnitStorage) : base(storage, authService)
+        IStorage<StaffUnit> staffUnitStorage, ILogger<EmployeesController> logger) : base(storage, authService)
     {
         _staffUnitStorage = staffUnitStorage;
+        _logger = logger;
     }
 
     [HttpGet("List/{positionId}")]
@@ -60,6 +62,15 @@ public class EmployeesController : BaseController<Employee>
         await Storage.Add(newEmp);
         unit.SetEmployee(newEmp.Id);
         await _staffUnitStorage.Update(unit);
+
+        _logger.LogInformation(
+            "Добавлен сотрудник с идентификатором {NewEmpId} и должностью {PosId};\n" +
+            "Штатная единица {SuId} переведена статус {Status}",
+            newEmp.Id,
+            unit.PositionId,
+            unit.Id,
+            unit.Status
+        );
 
         return new RegisterEmployeeResult(newEmp.Id);
     }
