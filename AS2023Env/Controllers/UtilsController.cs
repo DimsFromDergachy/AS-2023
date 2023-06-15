@@ -18,6 +18,12 @@ public class UtilsController : ControllerBase
     [HttpPost("FireEmployees")]
     public async Task<string> FireEmployee()
     {
+        if (!Constants.IsAdmin)
+        {
+            Response.StatusCode = StatusCodes.Status403Forbidden;
+            return "";
+        }
+
         var continueFire = true;
         while (continueFire)
         {
