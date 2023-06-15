@@ -11,7 +11,7 @@ builder.Services.AddEndpointsApiExplorer();
 builder.Services.AddSwaggerGen(c =>
 {
     c.EnableAnnotations();
-    
+    c.DocumentFilter<SwaggerTagFilter>();
     c.AddSecurityDefinition("Basic", new OpenApiSecurityScheme
     {
         Description = "Basic auth added to authorization header",
@@ -33,8 +33,11 @@ builder.Services.AddSwaggerGen(c =>
     });
 });
 
+if (!Constants.IsAdmin) {
+    builder.Services.AddHostedService<BackgroundService>();
+}
+
 builder.Services
-    .AddHostedService<BackgroundService>()
     .AddSingleton<AuthService>()
     .AddSingleton<IStorage<Position>, PositionStorage>()
     .AddSingleton<IStorage<Employee>, EmployeeStorage>()

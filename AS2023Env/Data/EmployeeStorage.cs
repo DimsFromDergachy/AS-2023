@@ -20,6 +20,7 @@ public class EmployeeStorage : IStorage<Employee>
     {
         var faker = new Faker("ru");
         var rnd = new Random();
+        bool needAddMock = Constants.IsAdmin;
 
         List<Position> positions = await _positionStorage.GetList();
         foreach (Position position in positions)
@@ -28,6 +29,21 @@ public class EmployeeStorage : IStorage<Employee>
                 Constants.InitialEmployeePerPositionMin,
                 Constants.InitialEmployeePerPositionMax + 1
             );
+
+            if (position.Id == Constants.MockPosition && needAddMock)
+            {
+                employeeCount--;
+                var mockEmp = new Employee
+                {
+                    Id = Constants.MockGuid.ToString(),
+                    PositionId = position.Id,
+                    FirstName = "Полиграф",
+                    LastName = "Полиграфов",
+                    Email = "ihatecats@domain.com"
+                };
+                _employees.Add(mockEmp);
+                needAddMock = false;
+            }
 
             while (employeeCount-- > 0)
             {

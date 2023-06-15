@@ -46,35 +46,12 @@ public class BackgroundService : IHostedService
 
     private async void FireEmployee(object _)
     {
-        List<StaffUnit> activeStaffUnits = await _staffUnitStorage.GetList(u => u.Status == StaffUnitStatus.Opened);
-        if (activeStaffUnits.Count >= Constants.MaximumActiveStaffUnits)
-        {
-            return;
-        }
-
-        List<Employee> employees = await _employeeStorage.GetList();
-        if (employees.Count == 0)
-        {
-            return;
-        }
-
-        var rng = new Random();
-        int index = rng.Next(0, employees.Count);
-
-        Employee pickToFire = employees[index];
-        StaffUnit staffUnit = (await _staffUnitStorage.GetList(u => u.EmployeeId == pickToFire.Id)).FirstOrDefault();
-        if (staffUnit?.Status == StaffUnitStatus.Pending)
-        {
-            return;
-        }
-        if (staffUnit != null)
-        {
-            staffUnit.SetEmployee(null);
-            await _staffUnitStorage.Update(staffUnit);
-        }
-        await _employeeStorage.Delete(pickToFire.Id);
-
-        _logger.LogInformation("{EmployeeId} уволен, штатная единица {StaffUnitId} освобождена", pickToFire.Id, staffUnit?.Id);
+        (Employee employee, StaffUnit staffUnit) = await Constants.FireEmployee(_staffUnitStorage, _employeeStorage);
+        _logger.LogInformation(
+            "{EmployeeId} уволен, штатная единица {StaffUnitId} освобождена",
+            employee.Id,
+            staffUnit?.Id
+        );
     }
 
     public Task StopAsync(CancellationToken cancellationToken)
