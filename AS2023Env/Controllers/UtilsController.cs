@@ -32,4 +32,22 @@ public class UtilsController : ControllerBase
         }
         return "Уволены!";
     }
+
+    [HttpPost("CloseAllPending")]
+    public async Task<string> CloseAllPending()
+    {
+        if (!Constants.IsAdmin)
+        {
+            Response.StatusCode = StatusCodes.Status403Forbidden;
+            return "";
+        }
+        
+        List<StaffUnit> pendingStaffUnits = await _staffUnitStorage.GetList(s => s.Status == StaffUnitStatus.Pending);
+        foreach (StaffUnit staffUnit in pendingStaffUnits)
+        {
+            staffUnit.SetClosed();
+        }
+
+        return $"Закрыто {pendingStaffUnits.Count}";
+    }
 }

@@ -22,7 +22,7 @@ public static class Constants
         get
         {
             _adminMode ??= Environment.GetEnvironmentVariable("AS23_ADMIN_MODE") == "1";
-            return _adminMode.Value || true;
+            return _adminMode.Value;
         }
     }    
 
