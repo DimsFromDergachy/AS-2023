@@ -22,7 +22,7 @@ public class UtilsController : ControllerBase
         if (!Constants.IsAdmin)
         {
             Response.StatusCode = StatusCodes.Status403Forbidden;
-            return "";
+            return null;
         }
 
         var continueFire = true;
@@ -40,7 +40,7 @@ public class UtilsController : ControllerBase
         if (!Constants.IsAdmin)
         {
             Response.StatusCode = StatusCodes.Status403Forbidden;
-            return "";
+            return null;
         }
         
         List<StaffUnit> pendingStaffUnits = await _staffUnitStorage.GetList(s => s.Status == StaffUnitStatus.Pending);
