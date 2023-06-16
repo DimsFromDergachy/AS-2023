@@ -15,7 +15,7 @@ public abstract class BaseController<TEntity> : ControllerBase where TEntity: cl
         Storage = storage;
         _authService = authService;
     }
-    
+
     [HttpGet("List")]
     [SwaggerOperation("Получить полный список")]
     public async Task<List<TEntity>> List()
@@ -23,7 +23,7 @@ public abstract class BaseController<TEntity> : ControllerBase where TEntity: cl
         if (!CheckAuth()) return null;
         return await Storage.GetList();
     }
-    
+
     [HttpGet("{id}")]
     [SwaggerOperation("Получить один элемент")]
     public async Task<TEntity> Id(string id)
@@ -38,14 +38,8 @@ public abstract class BaseController<TEntity> : ControllerBase where TEntity: cl
         return result;
     }
 
-    protected bool CheckAuth()
+    protected bool CheckAuth(bool allowTest = false)
     {
-        bool success = Request.Headers.TryGetValue("Authorization", out StringValues auth) && _authService.Check(auth);
-        if (!success)
-        {
-            Response.StatusCode = StatusCodes.Status401Unauthorized;
-        }
-
-        return success;
+        return Constants.CheckAuth(Request, Response, _authService, allowTest);
     }
 }

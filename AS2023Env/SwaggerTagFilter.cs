@@ -16,8 +16,12 @@ public class SwaggerTagFilter : IDocumentFilter
             if (!Constants.IsAdmin)
             {
                 var actionDescriptor = (ControllerActionDescriptor) contextApiDescription.ActionDescriptor;
-                if (!actionDescriptor.ControllerTypeInfo.GetCustomAttributes<SwaggerTagAttribute>().Any() &&
-                    !actionDescriptor.MethodInfo.GetCustomAttributes<SwaggerTagAttribute>().Any())
+                SwaggerTagAttribute attribute = 
+                    actionDescriptor.ControllerTypeInfo.GetCustomAttributes<SwaggerTagAttribute>().FirstOrDefault();
+
+                bool hide = attribute == null 
+                            || Constants.IsTest != (attribute.Description == Constants.TestControllerDescription);
+                if (hide)
                 {
                     string key = "/" + contextApiDescription.RelativePath!.TrimEnd('/');
                     swaggerDoc.Paths.Remove(key);

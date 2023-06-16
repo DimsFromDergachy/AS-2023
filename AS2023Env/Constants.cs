@@ -2,6 +2,7 @@
 using System.Text.Json.Serialization;
 using AS2023Env.Data;
 using AS2023Env.Models;
+using Microsoft.Extensions.Primitives;
 
 namespace AS2023Env;
 
@@ -16,7 +17,10 @@ public static class Constants
     public static readonly Guid MockGuid = Guid.Parse("11111111-1111-1111-1111-111111111111");
     public const string MockPosition = "teamlead";
 
+    public const string TestControllerDescription = "Тестовый контроллер";
+
     private static bool? _adminMode = null;
+    private static bool? _testMode = null;
 
     public static bool IsAdmin {
         get
@@ -24,7 +28,15 @@ public static class Constants
             _adminMode ??= Environment.GetEnvironmentVariable("AS23_ADMIN_MODE") == "1";
             return _adminMode.Value;
         }
-    }    
+    }   
+    
+    public static bool IsTest {
+        get
+        {
+            _testMode ??= Environment.GetEnvironmentVariable("AS23_TEST_MODE") == "1";
+            return _testMode.Value;
+        }
+    } 
 
     public static void Load()
     {
@@ -84,6 +96,23 @@ public static class Constants
         }
         await employeeStorage.Delete(pickToFire.Id);
         return (pickToFire, staffUnit);
+    }
+
+    public static bool CheckAuth(HttpRequest request, HttpResponse response, AuthService authService, bool allowTest)
+    {
+        if (!allowTest && Constants.IsTest)
+        {
+            response.StatusCode = StatusCodes.Status403Forbidden;
+            return false;
+        }
+
+        bool success = request.Headers.TryGetValue("Authorization", out StringValues auth) && authService.Check(auth);
+        if (!success)
+        {
+            response.StatusCode = StatusCodes.Status401Unauthorized;
+        }
+
+        return success;
     }
 }
 

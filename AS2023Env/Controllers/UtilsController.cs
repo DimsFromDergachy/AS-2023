@@ -1,9 +1,10 @@
-﻿using AS2023Env.Data;
-using AS2023Env.Models;
+﻿using AS2023Env.Models;
 using Microsoft.AspNetCore.Mvc;
 
 namespace AS2023Env.Controllers;
 
+[ApiController]
+[Route("/utils")]
 public class UtilsController : ControllerBase
 {
     private readonly IStorage<StaffUnit> _staffUnitStorage;

@@ -10,7 +10,10 @@ builder.Services.AddControllers();
 builder.Services.AddEndpointsApiExplorer();
 builder.Services.AddSwaggerGen(c =>
 {
-    c.EnableAnnotations();
+    if (!Constants.IsTest)
+    {
+        c.EnableAnnotations();
+    }
     c.DocumentFilter<SwaggerTagFilter>();
     c.AddSecurityDefinition("Basic", new OpenApiSecurityScheme
     {
@@ -33,7 +36,7 @@ builder.Services.AddSwaggerGen(c =>
     });
 });
 
-if (!Constants.IsAdmin) {
+if (!Constants.IsAdmin && !Constants.IsTest) {
     builder.Services.AddHostedService<BackgroundService>();
 }
 
