@@ -6,7 +6,7 @@ services:
     ports:
         - '5000:80'
     environment:
-        AS23_TEST_MODE: '1'
+        AS23_TEST_MODE: '0'
         AS23_ADMIN_MODE: '0'
         AS23_CREDENTIALS: 'admin:password'
         AS23_CONFIG: '{"empPerPosMin":10,"empPerPosMax":15,"activeUnitsMax":20,"fireDelaySec":180,"pendingDelaySec":30}'
