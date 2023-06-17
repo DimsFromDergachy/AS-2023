@@ -57,7 +57,8 @@ public class EmployeesController : BaseController<Employee>
             PositionId = unit.PositionId,
             FirstName = request.FirstName,
             LastName = request.LastName,
-            Email = request.Email
+            Email = request.Email,
+            StaffUnitId = unit.Id,
         };
         await Storage.Add(newEmp);
         unit.SetEmployee(newEmp.Id);

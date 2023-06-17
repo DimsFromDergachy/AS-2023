@@ -9,5 +9,5 @@ services:
         AS23_TEST_MODE: '0'
         AS23_ADMIN_MODE: '0'
         AS23_CREDENTIALS: 'admin:password'
-        AS23_CONFIG: '{"empPerPosMin":10,"empPerPosMax":15,"activeUnitsMax":20,"fireDelaySec":180,"pendingDelaySec":30}'
+        AS23_CONFIG: '{"empPerPosMin":10,"empPerPosMax":15,"activeUnitsMax":20,"fireDelaySec":1200,"pendingDelaySec":30}'
         AS23_POSITIONS: '{"hr":"Сотрудник отдела кадров","backend-developer":"Бэкенд-разработчик","frontend-developer":"Фронтенд-разработчик","teamlead":"Тимлид","devops":"DevOps инженер","qa":"Инженер по тестированию","design":"Дизайнер"}'
