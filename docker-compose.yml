@@ -1,7 +1,7 @@
 version: '3.9'
 services:
   service:
-    build: .
+    build: AS2023Env/.
     container_name: 'as23env-service'
     ports:
         - '5001:80'
