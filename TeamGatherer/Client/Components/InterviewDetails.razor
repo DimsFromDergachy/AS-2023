@@ -1,0 +1,85 @@
+@page "/interview/details/{InterviewId:int}"
+
+@using TeamGatherer.Shared.ViewModels
+@inject HttpClient Http
+@inject NavigationManager NavigationManager
+
+
+<PageTitle>Оценка кандидата</PageTitle>
+
+<h1>Оценка кандидата</h1>
+
+@if (IsLoading)
+{
+    <p><em>Загрузка...</em></p>
+}
+else
+{
+    <p><em>Статус интервью: @Interview.Status</em></p>
+
+    if (!Interview.Experts.Any())
+    {
+        <p><em>Все эксперты проводившие это интервью были уволены</em></p>
+    }
+
+    <div class="container">
+        <div class="row justify-content-start">
+            <div class="col-sm">
+                @foreach (var expert in Interview.Experts) // TODO: foreach InterviewResults
+                {
+                    <div class="row justify-content-start">
+                        <p><em>Экспертная оценка от @expert.FirstName @expert.LastName (@expert.Email)</em></p>
+
+                        @if (InterviewResults.Any(result => result.Expert.Id.Equals(expert.Id)))
+                        {
+                            <p><em>TODO: Добавить оценки!</em></p>
+
+                        }
+                        else
+                        {
+                            <div class="col-sm">
+                                <button type="button" hidden=@Vacancy.IsClosed @onclick="@(() => AddResultByExpert(expert.Id))">Оценить собеседование</button>
+                            </div>
+                        }
+                    </div>
+                }
+            </div>
+        </div>  
+    </div>
+}
+
+@code {
+    [Parameter]
+    public int InterviewId { get; set; }
+
+    protected bool IsLoading = true;
+
+    private VacancyViewModel Vacancy;
+    private InterviewViewModel Interview;
+    private List<InterviewResultViewModel> InterviewResults;
+
+    protected override async Task OnParametersSetAsync()
+    {
+        IsLoading = true;
+
+        if (InterviewId != 0)
+        {
+            Interview = await Http.GetFromJsonAsync<InterviewViewModel>($"api/Interview/GetInterviewById/{InterviewId}");
+            Vacancy = await Http.GetFromJsonAsync<VacancyViewModel>($"api/Vacancy/GetVacancyById/{Interview.VacancyId}");
+            InterviewResults = new(); //TODO
+        }
+
+        IsLoading = false;
+    }
+
+    private void AddResultByExpert(string expertId)
+    {
+        NavigationManager.NavigateTo($"/result/add/{InterviewId}/{expertId}");
+    }
+
+    private void Cancel()
+    {
+        NavigationManager.NavigateTo($"/vacancy/details/VacancyId={Interview.VacancyId}");
+    }
+}
+

@@ -1,0 +1,116 @@
+@page "/result/add/{InterviewId:int}/{ExpertId}"
+
+@using TeamGatherer.Shared.ViewModels
+@using TeamGatherer.Shared.Requests
+@inject HttpClient Http
+@inject NavigationManager NavigationManager
+
+
+<h1>Оценка навыков соискателя</h1>
+
+@if (IsLoading)
+{
+    <p><em>Загрузка...</em></p>
+}
+else if (Vacancy.IsClosed) {
+    <p><em>Вакансия была закрыта, оценка не возможна!</em></p>
+}
+else
+{
+    if (Expert == null)
+    {
+        <p><em>Эксперт проводивший интервью был уволен, но вы можете заполнить его оценку</em></p>
+    }
+    else
+    {
+        <p> Оценка кандидата экспертом @Expert.FirstName @Expert.LastName (@Expert.Email)</p>
+    }
+
+    <EditForm Model="@InterviewResult" OnValidSubmit="Save">
+        <DataAnnotationsValidator />
+
+        <div class="row justify-content-start">
+            <div class="col-sm">
+                @foreach (var item in InterviewResult.Estimations)
+                {
+                    <div class="row justify-content-start">
+                        <div class="col-sm">@item.Name</div>
+                        <div class="col-sm"><InputNumber min="0" max="@item.MaxScore" class="form-control"
+                            @bind-Value="item.Estimation" /></div>
+
+                    </div>
+                }
+            </div>
+        </div>    
+
+        <div class="form-group">
+            <button type="submit" class="btn btn-primary">Save</button>
+            <button class="btn btn-light" @onclick="Cancel">Cancel</button>
+        </div>
+    </EditForm>
+}
+
+@code {
+    [Parameter]
+    public int InterviewId { get; set; }
+    [Parameter]
+    public string ExpertId { get; set; }
+
+    protected bool IsLoading = true;
+    protected EmployeeViewModel Expert;
+
+    private VacancyViewModel Vacancy;
+    private InterviewViewModel Interview;
+    private string Comment;
+
+    public List<CriteriaViewModelExtended> Criterias{ get; set; }
+
+
+    public CreateInterviewResultRequest InterviewResult {get; set;}
+
+    protected override async Task OnParametersSetAsync()
+    {
+        IsLoading = true;
+        if (InterviewId != 0 && !string.IsNullOrEmpty(ExpertId))
+        {
+            Interview = await Http.GetFromJsonAsync<InterviewViewModel>($"api/Interview/GetInterviewById/{InterviewId}");
+            Vacancy = await Http.GetFromJsonAsync<VacancyViewModel>($"api/Vacancy/GetVacancyById/{Interview.VacancyId}");
+            Expert = Interview.Experts.FirstOrDefault(expert => expert.Id.Equals(ExpertId));
+            
+            InterviewResult = new CreateInterviewResultRequest
+            {
+                InterviewId = InterviewId,
+                ExpertId = ExpertId,
+                Estimations = Vacancy.Criteria.Select(criteria => new SkillEstimationRequest
+                {
+                    SkillId = criteria.Skill.Id.Value!,
+                    Name = criteria.Skill.Name,
+                    Estimation = 0,
+                    MaxScore = criteria.Skill.MaxScore
+                }).ToList(),
+                Comment = string.Empty,
+            };
+        }
+
+        IsLoading = false;
+    }
+
+    protected async Task Save()
+    {
+        await Http.PostAsJsonAsync("api/Interview/CreateInterviewResult", InterviewResult);
+        Cancel();
+    }
+
+    public void Cancel()
+    {
+        NavigationManager.NavigateTo($"/interview/details/{InterviewId}");
+    }
+
+    public class CriteriaViewModelExtended
+    {
+        public string Name { get; set; }
+        public int Weight { get; set; }
+        public int MaxScore { get; set; }
+        public int Estimation { get; set; }
+    }
+}
