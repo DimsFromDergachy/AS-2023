@@ -11,10 +11,26 @@ services:
         AS23_CREDENTIALS: 'admin:password'
         AS23_CONFIG: '{"empPerPosMin":10,"empPerPosMax":15,"activeUnitsMax":20,"fireDelaySec":1200,"pendingDelaySec":30}'
         AS23_POSITIONS: '{"hr":"Сотрудник отдела кадров","backend-developer":"Бэкенд-разработчик","frontend-developer":"Фронтенд-разработчик","teamlead":"Тимлид","devops":"DevOps инженер","qa":"Инженер по тестированию","design":"Дизайнер"}'
+
+  db:
+    image: 'postgres:latest'
+    ports:
+      - 5432:5432
+    environment:
+      POSTGRES_USER: 'username'
+      POSTGRES_PASSWORD: 'password'
+      POSTGRES_DB: 'teamGatherer_db'
+
   teamgatherer:
     build: TeamGatherer/.
     container_name: 'team-gatherer'
+    depends_on:
+      - db
     ports:
       - '5002:80'
     environment:
-      PASS: 'pass'
+      ConnectionString: 'Host=db;Port=5432;CommandTimeout=300;Database=teamGatherer_db;Username=username;Password=password;'
+      StaffCOnfig.Url: ''
+      StaffCOnfig.Login: 'admin'
+      StaffCOnfig.Password: 'password'
+      StaffCOnfig.HrKey: 'hr'
