@@ -26,6 +26,8 @@ namespace TeamGatherer.Shared
                 if (string.IsNullOrWhiteSpace(o.Password))
                     throw new Exception("Не задан пароль пользователя для авторизации в системе Кадры");
 
+                Console.Out.WriteLine($"DT: ConfigUrl: {o.Url}");
+
                 var c = sp.GetRequiredService<IHttpClientFactory>().CreateClient("StaffApi");
                 
                 var string64 = Convert.ToBase64String(UTF8Encoding.Default.GetBytes($"{o.Login}:{o.Password}"));

@@ -21,6 +21,12 @@ services:
       POSTGRES_PASSWORD: 'password'
       POSTGRES_DB: 'teamGatherer_db'
 
+  adminer:
+    image: adminer
+    restart: always
+    ports:
+      - 8080:8080
+
   teamgatherer:
     build: TeamGatherer/.
     container_name: 'team-gatherer'
@@ -29,8 +35,8 @@ services:
     ports:
       - '5002:80'
     environment:
-      ConnectionString: 'Host=db;Port=5432;CommandTimeout=300;Database=teamGatherer_db;Username=username;Password=password;'
-      StaffCOnfig.Url: ''
-      StaffCOnfig.Login: 'admin'
-      StaffCOnfig.Password: 'password'
-      StaffCOnfig.HrKey: 'hr'
+      ConnectionString: 'Host=db;Port=5432;CommandTimeout=300;Database=teamGatherer_db;User Id=username;Password=password;'
+      StaffCOnfig__Url: 'http://service:80'
+      StaffCOnfig__Login: 'admin'
+      StaffCOnfig__Password: 'password'
+      StaffCOnfig__HrKey: 'hr'
