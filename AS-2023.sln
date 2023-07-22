@@ -1,0 +1,56 @@
+﻿
+Microsoft Visual Studio Solution File, Format Version 12.00
+# Visual Studio Version 17
+VisualStudioVersion = 17.0.31903.59
+MinimumVisualStudioVersion = 10.0.40219.1
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "AS2023Env", "AS2023Env", "{E494DA78-B60A-4037-B70D-40F762B1BB0E}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "AS2023Env", "AS2023Env\AS2023Env\AS2023Env.csproj", "{BB356292-4BEA-4AE7-AE19-F098B4BEE0EC}"
+EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "TeamGatherer", "TeamGatherer", "{ABF37B7D-0257-45E7-8F1C-D39F75354315}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "TeamGatherer.Server", "TeamGatherer\Server\TeamGatherer.Server.csproj", "{AE4ADFB0-B2B6-4B3E-B337-DB8940458A95}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "TeamGatherer.Client", "TeamGatherer\Client\TeamGatherer.Client.csproj", "{87298A99-0ED7-4D1B-B70D-21DBE1D4558B}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "TeamGatherer.Shared", "TeamGatherer\Shared\TeamGatherer.Shared.csproj", "{66ED5AE4-4B19-4D7D-B3D0-8EACB428A531}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "AS2023", "AS2023\AS2023.csproj", "{EAD673F5-832A-4A64-9CB1-BDF022623F1A}"
+EndProject
+Global
+	GlobalSection(SolutionConfigurationPlatforms) = preSolution
+		Debug|Any CPU = Debug|Any CPU
+		Release|Any CPU = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(SolutionProperties) = preSolution
+		HideSolutionNode = FALSE
+	EndGlobalSection
+	GlobalSection(ProjectConfigurationPlatforms) = postSolution
+		{BB356292-4BEA-4AE7-AE19-F098B4BEE0EC}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{BB356292-4BEA-4AE7-AE19-F098B4BEE0EC}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{BB356292-4BEA-4AE7-AE19-F098B4BEE0EC}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{BB356292-4BEA-4AE7-AE19-F098B4BEE0EC}.Release|Any CPU.Build.0 = Release|Any CPU
+		{AE4ADFB0-B2B6-4B3E-B337-DB8940458A95}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{AE4ADFB0-B2B6-4B3E-B337-DB8940458A95}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{AE4ADFB0-B2B6-4B3E-B337-DB8940458A95}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{AE4ADFB0-B2B6-4B3E-B337-DB8940458A95}.Release|Any CPU.Build.0 = Release|Any CPU
+		{87298A99-0ED7-4D1B-B70D-21DBE1D4558B}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{87298A99-0ED7-4D1B-B70D-21DBE1D4558B}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{87298A99-0ED7-4D1B-B70D-21DBE1D4558B}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{87298A99-0ED7-4D1B-B70D-21DBE1D4558B}.Release|Any CPU.Build.0 = Release|Any CPU
+		{66ED5AE4-4B19-4D7D-B3D0-8EACB428A531}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{66ED5AE4-4B19-4D7D-B3D0-8EACB428A531}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{66ED5AE4-4B19-4D7D-B3D0-8EACB428A531}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{66ED5AE4-4B19-4D7D-B3D0-8EACB428A531}.Release|Any CPU.Build.0 = Release|Any CPU
+		{EAD673F5-832A-4A64-9CB1-BDF022623F1A}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{EAD673F5-832A-4A64-9CB1-BDF022623F1A}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{EAD673F5-832A-4A64-9CB1-BDF022623F1A}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{EAD673F5-832A-4A64-9CB1-BDF022623F1A}.Release|Any CPU.Build.0 = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(NestedProjects) = preSolution
+		{BB356292-4BEA-4AE7-AE19-F098B4BEE0EC} = {E494DA78-B60A-4037-B70D-40F762B1BB0E}
+		{AE4ADFB0-B2B6-4B3E-B337-DB8940458A95} = {ABF37B7D-0257-45E7-8F1C-D39F75354315}
+		{87298A99-0ED7-4D1B-B70D-21DBE1D4558B} = {ABF37B7D-0257-45E7-8F1C-D39F75354315}
+		{66ED5AE4-4B19-4D7D-B3D0-8EACB428A531} = {ABF37B7D-0257-45E7-8F1C-D39F75354315}
+	EndGlobalSection
+EndGlobal
