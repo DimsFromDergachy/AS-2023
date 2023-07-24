@@ -5,16 +5,17 @@ EXPOSE 443
 ENV ASPNETCORE_ENVIRONMENT="Production"
 
 FROM mcr.microsoft.com/dotnet/sdk:7.0 AS build
-RUN bash -E $(curl -fsSL https://deb.nodesource.com/setup_18.x | bash - ); apt install -y nodejs
+RUN curl --silent --location https://deb.nodesource.com/setup_20.x | bash -
+RUN apt-get install --yes nodejs
 
 FROM build AS build-node
 WORKDIR /src
 COPY ["AS2023.csproj", "."]
 RUN dotnet restore "AS2023.csproj"
 
-FROM build AS publish
+FROM build-node AS publish
 COPY . .
-RUN dotnet publish "AS2023.csproj" -c Release -o /app/build
+RUN dotnet publish "AS2023.csproj" -c Release -o /app/publish
 
 FROM base AS final
 WORKDIR /app
