@@ -21,12 +21,6 @@ services:
       POSTGRES_PASSWORD: 'password'
       POSTGRES_DB: 'teamGatherer_db'
 
-  adminer:
-    image: adminer
-    restart: always
-    ports:
-      - 8080:8080
-
   teamgatherer:
     build: TeamGatherer/.
     container_name: 'team-gatherer'
@@ -40,3 +34,12 @@ services:
       StaffCOnfig__Login: 'admin'
       StaffCOnfig__Password: 'password'
       StaffCOnfig__HrKey: 'hr'
+
+  react-app:
+    build: AS2023/.
+    depends_on:
+      - teamgatherer
+    ports:
+      - '5003:80'
+    environment:
+      DT: 'some'
