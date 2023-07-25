@@ -10,14 +10,14 @@ RUN apt-get install --yes nodejs
 
 FROM build AS build-node
 WORKDIR /src
-COPY ["AS2023.csproj", "."]
-RUN dotnet restore "AS2023.csproj"
+COPY ["AS-2023.csproj", "."]
+RUN dotnet restore "AS-2023.csproj"
 
 FROM build-node AS publish
 COPY . .
-RUN dotnet publish "AS2023.csproj" -c Release -o /app/publish
+RUN dotnet publish "AS-2023.csproj" -c Release -o /app/publish
 
 FROM base AS final
 WORKDIR /app
 COPY --from=publish /app/publish .
-ENTRYPOINT ["dotnet", "AS2023.dll"]
+ENTRYPOINT ["dotnet", "AS-2023.dll"]

@@ -8,7 +8,7 @@
     }
   },
   "profiles": {
-    "AS2023": {
+    "AS-2023": {
       "commandName": "Project",
       "launchBrowser": true,
       "applicationUrl": "https://localhost:7041;http://localhost:5085",

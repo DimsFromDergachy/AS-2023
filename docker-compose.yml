@@ -36,7 +36,7 @@ services:
       StaffCOnfig__HrKey: 'hr'
 
   react-app:
-    build: AS2023/.
+    build: AS-2023/.
     depends_on:
       - teamgatherer
     ports:

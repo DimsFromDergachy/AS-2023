@@ -15,7 +15,7 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "TeamGatherer.Client", "Team
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "TeamGatherer.Shared", "TeamGatherer\Shared\TeamGatherer.Shared.csproj", "{66ED5AE4-4B19-4D7D-B3D0-8EACB428A531}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "AS2023", "AS2023\AS2023.csproj", "{EAD673F5-832A-4A64-9CB1-BDF022623F1A}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "AS-2023", "AS-2023\AS-2023.csproj", "{EAD673F5-832A-4A64-9CB1-BDF022623F1A}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
