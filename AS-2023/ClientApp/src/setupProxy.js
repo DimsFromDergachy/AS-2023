@@ -9,6 +9,8 @@ const context = [
 ];
 
 const onError = (err, req, resp, target) => {
+    console.error(`🍆🍆🍆🍆🍆🍆🍆🍆🍆🍆🍆🍆🍆🍆`);
+    console.error(target);
     console.error(`${err.message}`);
 }
 

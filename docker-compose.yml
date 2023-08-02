@@ -43,4 +43,4 @@ services:
       - '5003:80'
     environment:
       DT_ASPNETCORE_HTTPS_PORT: '5002'
-      ASPNETCORE_URLS: 'http://localhost:5002'
+      DT_ASPNETCORE_URLS: 'http://team-gatherer:5002'
