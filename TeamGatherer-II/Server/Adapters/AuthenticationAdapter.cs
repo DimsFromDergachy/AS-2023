@@ -6,7 +6,7 @@ using System.Text.Json;
 
 using Microsoft.EntityFrameworkCore;
 
-using TeamGatherer.Client.Models;
+using TeamGatherer.Shared.Models;
 using TeamGatherer.Server.Data;
 using TeamGatherer.Server.Models;
 

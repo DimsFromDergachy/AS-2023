@@ -1,7 +1,7 @@
 ﻿using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 
-using TeamGatherer.Client.Pages;
+//using TeamGatherer.Client.Pages;
 using TeamGatherer.Server.Data;
 using TeamGatherer.Server.Models;
 using TeamGatherer.Shared;

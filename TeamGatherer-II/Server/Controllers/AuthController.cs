@@ -1,5 +1,5 @@
 ﻿using Microsoft.AspNetCore.Mvc;
-using TeamGatherer.Client.Models;
+using TeamGatherer.Shared.Models;
 using TeamGatherer.Server.Adapters;
 
 namespace TeamGatherer.Server.Controllers;
