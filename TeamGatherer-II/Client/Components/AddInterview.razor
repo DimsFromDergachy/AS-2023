@@ -1,0 +1,303 @@
+@page "/interview/add/{VacancyId:int}"
+@page "/interview/edit/{InterviewId:int}"
+
+@using TeamGatherer.Shared
+@using TeamGatherer.Shared.ViewModels
+@using TeamGatherer.Shared.Extensions
+@using TeamGatherer.Shared.Requests
+@using System.Net
+@inject HttpClient Http
+@inject NavigationManager NavigationManager
+
+<h1>@Title собеседование</h1>
+
+@if (IsLoading)
+{
+    <p><em>Загрузка...</em></p>
+}
+else if (Vacancies.All(v => v.IsClosed))
+{
+    <p><em>В системе нет открытых вакансий! Невозможно создать собеседование</em></p>
+}
+else
+{
+    <EditForm Model="@Interview" OnValidSubmit="SaveInterview">
+    <DataAnnotationsValidator/>
+
+    <label>Дата и место проведения</label><hr/>
+    <div class="m-2 row">
+        <div class="form-group">
+            <label for="StartTime" class="form-label">Начало</label>
+            <InputDate Type="InputDateType.DateTimeLocal" @bind-Value="Interview.StartTime"/>
+            <ValidationMessage For="@(() => Interview.StartTime)" />
+        </div>
+
+        <div class="form-group">
+            <label for="EndTime" class="form-label">Конец</label>
+            <InputDate Type="InputDateType.DateTimeLocal" @bind-Value="Interview.EndTime"/>
+            <ValidationMessage For="@(() => Interview.EndTime)" />
+        </div>
+
+        <div class="mb-3">
+            <label for="Location" class="form-label">Место проведения</label>
+            <div class="col-md-4">
+                <InputText class="form-control" @bind-Value="Interview.Location"/>
+            </div>
+            <ValidationMessage For="@(() => Interview.Location)" />
+        </div>
+    </div>
+    
+    <label>Информация о кандидате</label><hr/>
+    <div class="m-2 row">
+        <div class="mb-3">
+            <label for="Interview.Candidate.FIO" class="form-label">ФИО</label>
+            <div class="col-md-4">
+                <InputText class="form-control" @bind-Value="Interview.Candidate.FIO"/>
+            </div>
+            <ValidationMessage For="@(() => Interview.Candidate.FIO)" />
+        </div>
+
+        <div class="mb-3">
+            <label for="Interview.Candidate.Email" class="form-label">E-mail</label>
+            <div class="col-md-4">
+                <InputText class="form-control" @bind-Value="Interview.Candidate.Email"/>
+            </div>
+            <ValidationMessage For="@(() => Interview.Candidate.Email)" />
+        </div>
+    </div>
+
+    <label>Участники собеседования</label><hr/>
+    <div class="m-2 row">
+        <div class="mb-3">
+            <label for="Interview.HrIds" class="form-label">Сотрудники отдела кадров</label>
+            <InputSelect @bind-Value="SelectedHrs">
+                @foreach (var hr in Employees.Where(e => e.Position.Id == _staffConfig.HrKey))
+                {
+                    <option value="@hr.Id">@hr.FirstName</option>
+                }
+            </InputSelect>
+            <ValidationMessage For="@(() => Interview.Hrs)" />
+           
+        </div>
+
+        <div class="mb-3">
+            <label for="SelectedHrs" class="form-label">Эксперты</label>
+            <InputSelect @bind-Value="SelectedExperts">
+                @foreach (var hr in Employees.Where(e => e.Position.Id != _staffConfig.HrKey))
+                {
+                    <option value="@hr.Id">@hr.FirstName</option>
+                }
+            </InputSelect>
+        </div>
+    </div>
+
+    @if (Errors.Any())
+    {
+        <p><em>Ошибка создания собеседования: @Errors.Count</em></p>
+
+        <div class="row justify-content-start">
+            <div class="col-sm">
+                @foreach (var item in Errors)
+                {
+                    @foreach (var e in item.Value)
+                    {
+                        <div class="row justify-content-start">
+                            <div class="col-sm">@e</div>
+                        </div>
+                    }
+                }
+            </div>
+        </div>
+    } else if (IsSuccessUpdated)
+    {
+        <div class="row justify-content-start">
+            <div class="col-sm">
+                        <div class="row justify-content-start">
+                            <div class="col-sm">Собеседование успешно сохранено.</div>
+                        </div>
+            </div>
+        </div>
+    }
+
+    <hr/>
+    <div class="form-group">
+        <button type="submit" class="btn btn-primary">Сохранить</button>
+        <button class="btn btn-light" @onclick="Cancel">Отмена</button>
+    </div>
+
+    </EditForm>
+}
+
+@code
+{
+    [Parameter]
+    public int InterviewId { get; set; }
+
+    [Parameter]
+    public int VacancyId { get; set; }
+
+    private StaffConfig _staffConfig;
+
+    protected string Title = "Добавить";
+
+    protected InterviewViewModel Interview = null;
+    protected bool IsLoading = true;
+
+    protected List<VacancyViewModel> Vacancies { get; set; } = new();
+
+    protected string SelectedHrId { get; set; } = string.Empty;
+
+    public required List<EmployeeViewModel> Employees { get; set; }
+    protected string[] SelectedHrs { get; set; } = new string[0];
+    protected string[] SelectedExperts { get; set; } = new string[0];
+
+    private EditContext? editContext;
+    private ValidationMessageStore? messageStore;
+
+    protected Dictionary<string, List<string>> Errors = new();
+    protected bool IsSuccessUpdated = false;
+
+
+    protected override async Task OnInitializedAsync()
+    {
+        IsLoading = true;
+
+        Vacancies = await Http.GetFromJsonAsync<List<VacancyViewModel>>("api/Vacancy/GetVacancies");
+        Employees = await Http.GetFromJsonAsync<List<EmployeeViewModel>>("api/Staff/GetEmployees");
+        _staffConfig = await Http.GetFromJsonAsync<StaffConfig>("api/Frontend/GetStaffConfig");
+
+        if (InterviewId != 0)
+        {
+            // TODO: GetInterview by ID
+        }
+
+        if (Interview == null && Vacancies.Any())
+        {
+            var now = DateTime.UtcNow.Truncate();
+            Interview = new InterviewViewModel()
+            {
+                VacancyId = VacancyId,
+                StartTime = now,
+                EndTime = now.AddMinutes(15).Truncate(),
+
+                Location = string.Empty,
+
+                Candidate = new(),
+                Hrs = new(),
+                Experts = new(),
+            };
+        }
+
+        if (Interview != null)
+        {
+            editContext = new(Interview);
+            editContext.OnValidationRequested += HandleValidationRequested;
+        }
+
+        IsLoading = false;
+    }
+
+    private void HandleValidationRequested(object? sender, 
+        ValidationRequestedEventArgs args)
+    {
+        messageStore?.Clear();
+
+        Console.Out.WriteLine("DT 1");
+
+        // Custom validation logic
+        if (SelectedHrs.Count() == 0)
+        {
+            Console.Out.WriteLine("DT 2");
+            messageStore?.Add(() => Interview.Hrs, "Select at least one.");
+        }
+    }
+
+    protected async Task SaveInterview()
+    {
+        Errors = new();
+        IsSuccessUpdated = false;
+
+        HttpResponseMessage response;
+
+        if (InterviewId == 0)
+        {
+            var request = new CreateInterviewRequest
+            {
+                VacancyId = VacancyId,
+                StartTime = Interview.StartTime,
+                EndTime = Interview.EndTime,
+                Location = Interview.Location,
+                Candidate = new CandidateRequest
+                {
+                    FIO = Interview.Candidate.FIO,
+                    Email = Interview.Candidate.Email,
+                },
+                HrIds = SelectedHrs.ToList(),
+                ExpertIds = SelectedExperts.ToList(),
+            };
+
+            response = await Http.PostAsJsonAsync("api/Interview/CreateInterview", request);
+        }
+        else
+        {
+            var request = new UpdateInterviewRequest
+            {
+                InterviewId = InterviewId,
+                StartTime = Interview.StartTime,
+                EndTime = Interview.EndTime,
+                Location = Interview.Location,
+                Candidate = new CandidateRequest
+                {
+                    FIO = Interview.Candidate.FIO,
+                    Email = Interview.Candidate.Email,
+                },
+                HrIds = SelectedHrs.ToList(),
+                ExpertIds = SelectedExperts.ToList(),
+                Status = Interview.Status,
+            };
+            response = await Http.PostAsJsonAsync("api/Interview/UpdateInterview", request);
+        }
+
+        if (response.IsSuccessStatusCode)
+        {
+            IsSuccessUpdated = true;
+            Cancel();
+            return;
+        }
+
+        if (response.StatusCode == HttpStatusCode.BadRequest)
+        {
+            var errors = await response.Content.ReadFromJsonAsync<BadResponse>();
+            if (errors != null)
+            {
+                Errors = errors.Errors;
+            }
+        }
+   
+        if (!Errors.Any())
+        {
+            Errors = new Dictionary<string, List<string>>
+            {
+                {"Fail", new List<string> {"Неизвестная ошибка"}},
+            };
+        }
+    }
+
+    public class BadResponse
+    {
+        public Dictionary<string, List<string>> Errors { get; set; }
+    }
+
+    public void Cancel()
+    {
+        NavigationManager.NavigateTo("");
+    }
+
+    public void Dispose()
+    {
+        if (editContext is not null)
+        {
+            editContext.OnValidationRequested -= HandleValidationRequested;
+        }
+    }
+}

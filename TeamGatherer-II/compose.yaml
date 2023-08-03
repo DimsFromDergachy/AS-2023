@@ -1,0 +1,10 @@
+services:
+    teamgatherer:
+        container_name: teamgatherer
+        image: teamgatherer:latest
+        restart: on-failure:5
+        ports:
+            - 80:5000
+            - 443:5001
+        environment:
+            - ASPNETCORE_URLS=${ASPNETCORE_URLS}

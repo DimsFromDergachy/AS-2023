@@ -1,0 +1,72 @@
+﻿@page "/vacanies"
+@using TeamGatherer.Shared.ViewModels
+@inject HttpClient Http
+@inject NavigationManager NavigationManager
+
+<PageTitle>Вакансии</PageTitle>
+
+<h1>Вакансии</h1>
+
+<hr />
+@if (_errorList.Any())
+{
+    @foreach (var error in _errorList)
+    {
+        <p>
+            <em>Ошибка: @error</em>
+        </p>
+    }
+}
+
+<div class="container">
+    <div class="row justify-content-start">
+        <div class="col-sm">Наименование вакансии</div>
+        <div class="col-sm"></div>
+        <div class="col-sm"></div>
+    </div>
+    <br />
+    <div class="row justify-content-start">
+        @foreach (var item in VacanciesList)
+        {
+            <div class="row justify-content-start">
+                <div class="col-sm">@item.Name</div>
+                <div class="col-sm">
+                    <button type="button" @onclick="() => { ViewDetails(item.Id); }">Детали</button>
+                </div>
+                <div class="col-sm">
+                    <div hidden=@(!item.IsClosed)>В архиве</div>
+                    <button hidden=@item.IsClosed type="button" @onclick="() => { EditVacancy(item.Id); }">Редактировать</button>
+                </div>
+            </div>
+        }
+    </div>
+</div>
+
+@code {
+    private readonly List<string> _errorList = new();
+
+    protected List<VacancyViewModel> VacanciesList { get; set; } = new();
+    
+    protected override async Task OnInitializedAsync()
+    {
+        try
+        {
+            var vacancies = await Http.GetFromJsonAsync<List<VacancyViewModel>>("api/Vacancy/GetVacancies") ?? new List<VacancyViewModel>();
+            VacanciesList = vacancies;
+        }
+        catch (Exception exception)
+        {
+            _errorList.Add(exception.Message);
+        }
+    }
+
+    public void EditVacancy(int id)
+    {
+        NavigationManager.NavigateTo($"/vacancy/edit/{id}");
+    }
+
+    public void ViewDetails(int id)
+    {
+        NavigationManager.NavigateTo($"/vacancy/details/{id}");
+    }
+}

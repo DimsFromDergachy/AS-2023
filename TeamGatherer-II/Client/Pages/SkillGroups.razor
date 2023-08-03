@@ -1,0 +1,68 @@
+@page "/skillgroups"
+@using TeamGatherer.Shared.ViewModels
+@inject HttpClient Http
+@inject NavigationManager NavigationManager
+
+<PageTitle>Группы навыков</PageTitle>
+
+<h1>Группы навыков</h1>
+
+@if (skillgroups == null)
+{
+    <p><em>Загрузка...</em></p>
+}
+else
+{
+        <table class="table">
+        <thead>
+            <tr>
+                <th>Группа</th>
+                <th></th>
+                <th></th>
+            </tr>
+        </thead>
+        <tbody>
+            @foreach (var group in skillgroups)
+            {
+                <tr>
+                    <td>@group.Name</td>
+                    <td><button class="btn btn-light" @onclick="() => {EditGroup(group.Id); }">Редактировать</button></td>
+                    <td><button class="btn btn-light" @onclick="() => {RemoveGroup(group); }">@if (group.IsDeleted.Value!) {<p>Восстановить</p>} else {<p>Удалить</p>} </button></td>
+                </tr>
+            }
+        </tbody>
+    </table>
+
+    <button class="btn btn-light" @onclick="AddGroup">Добавить навык</button>}
+
+@code
+{
+    private List<SkillGroupViewModel>? skillgroups;
+
+    protected override async Task OnInitializedAsync()
+    {
+        try
+        {
+            skillgroups = await Http.GetFromJsonAsync<List<SkillGroupViewModel>>("api/SkillGroups/GetSkillGroups");
+        }
+        catch {}
+    }
+
+
+
+    public void EditGroup(int? groupId)
+    {
+        NavigationManager.NavigateTo($"/skillgroup/edit/{groupId}");
+    }
+
+    public void AddGroup()
+    {
+        NavigationManager.NavigateTo($"/skillgroup/add");
+    }
+
+    public async Task RemoveGroup(SkillGroupViewModel group)
+    {
+        await Http.PostAsJsonAsync("api/SkillGroups/ArchiveSkillGroup", group);
+        group.IsDeleted = !group.IsDeleted;
+    }
+}

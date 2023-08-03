@@ -1,0 +1,71 @@
+@page "/skills"
+@using TeamGatherer.Shared.ViewModels
+@inject HttpClient Http
+@inject NavigationManager NavigationManager
+
+<PageTitle>Список навыков</PageTitle>
+
+<h1>Список навыков</h1>
+
+@if (skills == null || SkillGroups == null)
+{
+    <p><em>Загрузка...</em></p>
+}
+else
+{
+        <table class="table">
+        <thead>
+            <tr>
+                <th>Навык</th>
+                <th>Группа навыков</th>
+                <th></th>
+                <th></th>
+            </tr>
+        </thead>
+        <tbody>
+            @foreach (var skill in skills)
+            {
+                var skillGroup = SkillGroups.FirstOrDefault(gr => gr.Id == skill.SkillGroupId);
+                <tr>
+                    <td>@skill.Name</td>
+                    <td>@(skillGroup.Name ?? "Неизвестный")</td>
+                    <td><button class="btn btn-light" @onclick="() => {EditSkill(skill.Id.Value!); }" disabled="@(skillGroup.IsDeleted == true)">Редактировать</button></td>
+                    <td><button class="btn btn-light" @onclick="() => {RemoveSkill(skill); }">@if (skill.IsDeleted.Value!) {<p>Восстановить</p>} else {<p>Удалить</p>} </button></td>
+                </tr>
+            }
+        </tbody>
+    </table>
+
+    <button class="btn btn-light" @onclick="AddSkill">Добавить навык</button>
+}
+
+@code {
+    protected List<SkillGroupViewModel>? SkillGroups;
+    private List<SkillViewModel>? skills;
+
+    protected override async Task OnInitializedAsync()
+    {
+        try
+        {
+            skills = await Http.GetFromJsonAsync<List<SkillViewModel>>("api/Skills/GetSkills");
+            SkillGroups = await Http.GetFromJsonAsync<List<SkillGroupViewModel>>("api/SkillGroups/GetSkillGroups");
+        }
+        catch {}
+    }
+
+    public void EditSkill(int? skillId)
+    {
+        NavigationManager.NavigateTo($"/skill/edit/{skillId}");
+    }
+
+    public void AddSkill()
+    {
+        NavigationManager.NavigateTo($"/skill/add");
+    }
+
+    public async Task RemoveSkill(SkillViewModel skill)
+    {
+        await Http.PostAsJsonAsync("api/Skills/ArchiveSkill", skill);
+        skill.IsDeleted = !skill.IsDeleted;
+    }
+}

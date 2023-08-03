@@ -1,0 +1,195 @@
+﻿@page "/vacancy/details/{VacancyId:int}"
+@using TeamGatherer.Shared.ViewModels
+@inject HttpClient Http
+@inject NavigationManager NavigationManager
+
+<PageTitle>Детали вакансии</PageTitle>
+
+<h1>Детали вакансии 
+    @if (IsAchive)
+    {
+        <div>(Архив)</div>
+    }
+</h1>
+
+<hr/>
+
+@if (IsLoading)
+{
+    <p><em>Загрузка...</em></p>
+}
+else
+{
+    <div class="container">
+        <div class="row justify-content-start">
+            <div class="col-sm">Заголовок</div>
+            <div class="col-sm">@Vacancy?.Name</div>
+        </div>
+        <br />
+        <div class="row justify-content-start">
+            <div class="col-sm">Должность</div>
+            <div class="col-sm">@Vacancy?.Position?.Name</div>
+        </div>
+        <br />
+        <div class="row justify-content-start">
+            <div class="col-sm">Требования к кандидату</div>
+            <div class="col-sm">@Vacancy.Requrements</div>
+        </div>
+        <br />
+        <div class="row justify-content-start">
+            <div class="col-sm">Обязанности</div>
+            <div class="col-sm">@Vacancy.Responsibilities</div>
+        </div>
+        <br />
+        <div class="row justify-content-start">
+            <div class="col-sm">
+                Сотрудники кадровой службы, отвественные за вакансию:
+            </div>
+        </div>
+        <div class="row justify-content-start">
+            <div class="col-sm">
+                @foreach (var item in Vacancy.Hrs)
+                {
+                    <div class="row justify-content-start">
+                        <div class="col-sm">@item.FirstName @item.LastName</div>
+                        <div class="col-sm">@item.Email</div>
+                    </div>
+                }
+            </div>
+        </div>
+        <br />
+        <div class="row justify-content-start">
+            <div class="col-sm">
+                Собеседования:
+            </div>
+        </div>
+        <div class="row justify-content-start">
+            <div class="col-sm">
+                <div class="row justify-content-start">
+                    <div class="col-sm">Статус</div>
+                    <div class="col-sm">Дата начала</div>
+                    <div class="col-sm">ФИО кандадата</div>
+                    <div class="col-sm">Оценило экспертов</div>
+                    <div class="col-sm">Текущий результат</div>
+                    <div class="col-sm"></div>
+                    <div class="col-sm"></div>
+                </div>
+                @foreach (var item in Interviews)
+                {
+                    <div class="row justify-content-start">
+                        <div class="col-sm">@item.Status</div>
+                        <div class="col-sm">@item.StartTime</div>
+                        <div class="col-sm">@item.Candidate.FIO</div>
+                        <div class="col-sm">@_countDictionary[item.Id]</div>
+                        <div class="col-sm">@_scoreDictionary[item.Id]</div>
+                        <div class="col-sm">
+                            <button type="button" @onclick="() => { Estimate(item.Id); }">Детали собеседования</button>
+                        </div>
+                        <div class="col-sm">
+                            <button type="button" hidden=@(item.Status is "Rejected" or "Finished") 
+                                @onclick="async () => { await CancelInterview(item.Id); }">Отменить</button>
+                        </div>
+                    </div>
+                }
+            </div>
+        </div>
+        <br />
+        <div class="row justify-content-start">
+            <div class="col-sm">
+                <button type="button" hidden=@Vacancy.IsClosed @onclick="EditVacancy">Редактировать вакансию</button>
+            </div>
+        </div>
+
+        <div class="row justify-content-start">
+            <div class="col-sm">
+                <button type="button" @onclick="AddInterview">Добавить собеседование</button>
+            </div>
+        </div>
+
+    </div>
+}
+
+
+@code {
+    [Parameter]
+    public int VacancyId { get; set; }
+
+    protected bool IsLoading = true;
+
+    private readonly List<string> _errorList = new();
+
+    protected List<InterviewViewModel> Interviews = new();
+
+    protected bool IsAchive { get; set; }
+
+    protected VacancyViewModel? Vacancy { get; set; } = new();
+
+    private Dictionary<int, string> _countDictionary = new();
+    private Dictionary<int, decimal> _scoreDictionary = new();
+
+    protected override async Task OnParametersSetAsync()
+    {
+        IsLoading = true;
+
+        try
+        {
+            Interviews = await Http.GetFromJsonAsync<List<InterviewViewModel>>($"api/Interview/GetInterviewForVacancyId/{VacancyId}") ?? new List<InterviewViewModel>();
+            Vacancy = await Http.GetFromJsonAsync<VacancyViewModel>($"api/Vacancy/GetVacancyById/{VacancyId}");
+            
+            IsAchive = Vacancy?.IsClosed ?? false;
+
+            foreach (var interviewViewModel in Interviews)
+            {
+                var interviewResults = 
+                    await Http.GetFromJsonAsync<List<InterviewResultViewModel>>($"api/Interview/GetInterviewResultsForInterview/{interviewViewModel.Id}")
+                                       ?? new List<InterviewResultViewModel>();
+
+                var expertCount = interviewViewModel.Experts.Count;
+                var score = 0.0M;
+                if (interviewResults.Count > 0)
+                {
+                    score = interviewResults.Select(it => it.OverallScore).Sum() / (decimal)interviewResults.Count;    
+                }
+
+                _countDictionary.Add(interviewViewModel.Id, $"{interviewResults.Count}/{expertCount}");
+                _scoreDictionary.Add(interviewViewModel.Id, score);
+            }
+        }
+        catch (Exception exception)
+        {
+            _errorList.Add(exception.Message);
+        }
+
+        IsLoading = false;
+    }
+
+    public async Task CancelInterview(int interviewId)
+    {
+        await Http.GetFromJsonAsync<bool>($"api/Interview/CancelInterviewById/{interviewId}");
+        Interviews = await Http.GetFromJsonAsync<List<InterviewViewModel>>($"api/Interview/GetInterviewForVacancyId/{VacancyId}") ?? new List<InterviewViewModel>();
+    }
+
+    public void Estimate(int interviewId)
+    {
+        NavigationManager.NavigateTo($"/interview/details/{interviewId}");
+    }
+
+    public void EditVacancy()
+    {
+        if (Vacancy == null)
+        {
+            return;
+        }
+
+        NavigationManager.NavigateTo($"/vacancy/edit/{Vacancy.Id}");
+    }
+
+    protected void AddInterview()
+    {
+        if (Vacancy == null)
+        {
+            return;
+        }
+        NavigationManager.NavigateTo($"/interview/add/{Vacancy.Id}");
+    }
+}

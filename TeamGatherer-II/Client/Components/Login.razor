@@ -1,0 +1,44 @@
+﻿@page "/login"
+@using TeamGatherer.Client.Models
+@using TeamGatherer.Client.Services
+@inject IAuthenticationService AuthService;
+@inject NavigationManager NavigationManager
+
+<h1>LoginRequest</h1>
+<EditForm Model="@LoginRequest" OnValidSubmit="LoginUser">
+    <DataAnnotationsValidator />
+    <div class="mb-3">
+        <label for="LoginRequest" class="form-label">Логин</label>
+        <div class="col-md-4">
+            <InputText class="form-control" @bind-Value="LoginRequest.Login" />
+        </div>
+        <ValidationMessage For="@(() => LoginRequest.Login)" />
+    </div>
+    <div class="mb-3">
+        <label for="Password" class="form-label">Password</label>
+        <div class="col-md-4">
+            <InputText class="form-control" @bind-Value="LoginRequest.Password" />
+        </div>
+        <ValidationMessage For="@(() => LoginRequest.Password)" />
+    </div>
+    <div class="form-group">
+        <button type="submit" class="btn btn-primary">Save</button>
+        <button class="btn btn-light" @onclick="Cancel">Cancel</button>
+    </div>
+</EditForm>
+<br />
+
+@code {
+    protected LoginRequest LoginRequest = new();
+
+    protected async Task LoginUser()
+    {
+        await AuthService.Login(LoginRequest);
+        Cancel();
+    }
+
+    public void Cancel()
+    {
+        NavigationManager.NavigateTo("/fetchjobSeekerdetails");
+    }
+}
