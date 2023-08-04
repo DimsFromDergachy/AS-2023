@@ -10,7 +10,6 @@ FROM mcr.microsoft.com/dotnet/sdk:7.0 AS build
 WORKDIR /src
 COPY ["nuget.config", "."]
 COPY ["Server/TeamGatherer.Server.csproj", "Server/"]
-COPY ["Client/TeamGatherer.Client.csproj", "Client/"]
 COPY ["Shared/TeamGatherer.Shared.csproj", "Shared/"]
 RUN dotnet restore "Server/TeamGatherer.Server.csproj"
 COPY . .

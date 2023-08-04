@@ -36,11 +36,15 @@ services:
       StaffCOnfig__HrKey: 'hr'
 
   react-app:
-    build: AS-2023/.
+    build: TeamGatherer-II/.
+    container_name: react-app
     depends_on:
-      - teamgatherer
+      - db
     ports:
       - '5003:80'
     environment:
-      DT_ASPNETCORE_HTTPS_PORT: '5002'
-      DT_ASPNETCORE_URLS: 'http://team-gatherer:5002'
+      ConnectionString: 'Host=db;Port=5432;CommandTimeout=300;Database=react_app_db;User Id=username;Password=password;'
+      StaffCOnfig__Url: 'http://service:80'
+      StaffCOnfig__Login: 'admin'
+      StaffCOnfig__Password: 'password'
+      StaffCOnfig__HrKey: 'hr'
