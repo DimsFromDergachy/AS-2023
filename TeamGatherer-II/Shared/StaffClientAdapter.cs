@@ -62,7 +62,7 @@ namespace TeamGatherer.Shared
                 return result;
 
             }
-            catch (Exception e)
+            catch (Exception)
             {
                 return null;
             }
@@ -83,9 +83,8 @@ namespace TeamGatherer.Shared
                     Name = position.Name
                 };
             }
-            catch (Exception e)
+            catch (Exception)
             {
-
                 return null;
             }
         }
@@ -113,7 +112,7 @@ namespace TeamGatherer.Shared
                     Status = staffUnit.Status
                 };
             }
-            catch (System.Net.Http.HttpRequestException e)
+            catch (System.Net.Http.HttpRequestException)
             {
                 return null;
             }

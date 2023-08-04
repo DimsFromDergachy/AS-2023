@@ -5,8 +5,8 @@ namespace TeamGatherer.Shared.Models;
 public record LoginRequest
 {
     [Required]
-    public string? Login { get; set; }
+    public string Login { get; set; }
 
     [Required]
-    public string? Password { get; set; }
+    public string Password { get; set; }
 }

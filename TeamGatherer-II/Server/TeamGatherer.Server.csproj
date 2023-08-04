@@ -12,7 +12,6 @@
   </ItemGroup>
 
   <ItemGroup>
-    <ProjectReference Include="..\Client\TeamGatherer.Client.csproj" />
     <ProjectReference Include="..\Shared\TeamGatherer.Shared.csproj" />
   </ItemGroup>
 

@@ -8,7 +8,9 @@ namespace TeamGatherer.Server.Pages;
 [IgnoreAntiforgeryToken]
 public class ErrorModel : PageModel
 {
+    #nullable enable
     public string? RequestId { get; set; }
+    #nullable restore
 
     public bool ShowRequestId => !string.IsNullOrEmpty(RequestId);
 
