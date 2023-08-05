@@ -48,3 +48,9 @@ services:
       StaffCOnfig__Login: 'admin'
       StaffCOnfig__Password: 'password'
       StaffCOnfig__HrKey: 'hr'
+
+  client-only:
+    build: TeamGatherer-II/Client/.
+    container_name: client-only
+    ports:
+      - '5004:80'
