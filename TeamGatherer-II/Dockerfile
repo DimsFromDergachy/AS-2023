@@ -30,16 +30,12 @@ COPY ["Client/AS-2023.csproj", "."]
 RUN dotnet restore "AS-2023.csproj"
 
 FROM build-client AS publish-client
-COPY . .
+COPY ["Client", "."]
 RUN dotnet publish "AS-2023.csproj" -c Release -o /app/publish
 
 FROM base AS final
 WORKDIR /app
-COPY --from=publish /app/publish .
-ENTRYPOINT ["dotnet", "AS-2023.dll"]
-
-
-FROM base AS final
-WORKDIR /app
-COPY --from=publish /app/publish .
-ENTRYPOINT ["dotnet", "TeamGatherer.Server.dll"]
+#COPY --from=publish /app/publish .
+COPY --from=publish-client /app/publish client
+ENTRYPOINT ["dotnet", "client/AS-2023.dll"]
+#ENTRYPOINT ["dotnet", "TeamGatherer.Server.dll"]
